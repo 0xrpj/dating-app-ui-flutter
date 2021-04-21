@@ -1,3 +1,15 @@
 export './my_password_field.dart';
 export './my_text_field.dart';
 export './my_text_button.dart';
+export './flat_action_btn.dart';
+export './flat_add_story_btn.dart';
+export './flat_chat_item.dart';
+export './flat_chat_message.dart';
+export './flat_counter.dart';
+export './flat_info_page_wrapper.dart';
+export './flat_message_input_box.dart';
+export './flat_primary_button.dart';
+export './flat_profile_image.dart';
+export './flat_section_header.dart';
+export './flat_page_wrapper.dart';
+export './flat_page_header.dart';

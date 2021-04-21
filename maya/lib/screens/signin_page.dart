@@ -39,16 +39,15 @@ class _SignInPageState extends State<SignInPage> {
             reverse: true,
             slivers: [
               SliverFillRemaining(
-                hasScrollBody: true,
+                hasScrollBody: false,
                 child: Padding(
                   // padding: const EdgeInsets.symmetric(horizontal: 20),
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                  
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 18),
+
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Flexible(
-                        fit: FlexFit.loose,
+                      Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -64,13 +63,10 @@ class _SignInPageState extends State<SignInPage> {
                               style: kBodyText2,
                             ),
                             SizedBox(
-                              height: 60,
+                              // height: 40,
+                              height:
+                                  MediaQuery.of(context).size.height / 30.05,
                             ),
-                            // MyTextField(
-                            //   // controller: usernameController,
-                            //   hintText: 'Phone, email or username',
-                            //   inputType: TextInputType.text,
-                            // ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: TextField(
@@ -99,14 +95,6 @@ class _SignInPageState extends State<SignInPage> {
                                 ),
                               ),
                             ),
-                            // MyPasswordField(
-                            //   isPasswordVisible: isPasswordVisible,
-                            //   onTap: () {
-                            //     setState(() {
-                            //       isPasswordVisible = !isPasswordVisible;
-                            //     });
-                            //   },
-                            // ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: TextField(

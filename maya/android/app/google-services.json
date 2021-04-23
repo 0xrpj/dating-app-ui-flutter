@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "794087350237",
+    "project_id": "maya-a-dating-app",
+    "storage_bucket": "maya-a-dating-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:794087350237:android:e9d08fa7e0ee41028ba034",
+        "android_client_info": {
+          "package_name": "com.example.maya"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "794087350237-kr1kuisnql3mdnknd0o6ppsnuhqasdn6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDq02M4oT-0E_AgGdNdW07qz-FjAG24pQc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "794087350237-kr1kuisnql3mdnknd0o6ppsnuhqasdn6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

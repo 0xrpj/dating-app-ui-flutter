@@ -1,32 +1,57 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:maya/screens/storage.dart';
 import '../constants.dart';
 import '../screens/screen.dart';
 import '../widgets/widget.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:page_transition/page_transition.dart';
 
+String finalEmail, finalName;
+
 class SplashScreen extends StatelessWidget {
+  final SecureStorage secureStorage = SecureStorage();
+
+  Future<String> fetchValues() async {
+    finalEmail = await secureStorage.readSecureData("email");
+    finalName = await secureStorage.readSecureData("name");
+    return finalEmail;
+  }
+
+  //Fetching data from secureStorage
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
-        scaffoldBackgroundColor: kBackgroundColor,
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: AnimatedSplashScreen(
-        splash: Image.asset(
-          'assets/images/logonomaya.png',
-        ),
-        nextScreen: WelcomePage(),
-        splashTransition: SplashTransition.slideTransition,
-        pageTransitionType: PageTransitionType.fade,
-      ),
-    );
+    return FutureBuilder(
+        future: fetchValues(),
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center();
+          } else {
+            if (snapshot.hasError)
+              return Center(child: Text('Error: ${snapshot.error}'));
+            else
+              return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                theme: ThemeData(
+                  textTheme:
+                      GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+                  scaffoldBackgroundColor: kBackgroundColor,
+                  primarySwatch: Colors.blue,
+                  visualDensity: VisualDensity.adaptivePlatformDensity,
+                ),
+                home: AnimatedSplashScreen(
+                  splash: Image.asset(
+                    'assets/images/logonomaya.png',
+                  ),
+                  nextScreen: finalEmail == null ? WelcomePage() : HomePage(),
+                  splashTransition: SplashTransition.slideTransition,
+                  pageTransitionType: PageTransitionType.fade,
+                ),
+              ); // snapshot.data  :- get your object which is pass from your downloadData() function
+          }
+        });
   }
 }
 

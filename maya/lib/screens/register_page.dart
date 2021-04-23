@@ -1,7 +1,27 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import '../widgets/widget.dart';
 import '../constants.dart';
+import 'package:maya/screens/screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+Widget _alertWidget(BuildContext context, String title, String content) {
+  showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+            title: new Text(title),
+            content: new Text(content),
+            actions: [
+              new GestureDetector(
+                onTap: () => Navigator.of(context).pop(false),
+                child: Text("Dismiss"),
+              ),
+            ],
+            actionsPadding: EdgeInsets.fromLTRB(0, 0, 20, 20),
+          ));
+}
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -10,6 +30,12 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   bool passwordVisibility = true;
+  bool loading = false;
+  TextEditingController _emailController = new TextEditingController();
+  TextEditingController _passwordController = new TextEditingController();
+  TextEditingController _phoneController = new TextEditingController();
+  TextEditingController _nameController = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,26 +80,137 @@ class _RegisterPageState extends State<RegisterPage> {
                           SizedBox(
                             height: 50,
                           ),
-                          MyTextField(
-                            hintText: 'Name',
-                            inputType: TextInputType.name,
+                          TextField(
+                            controller: _nameController,
+                            style: kBodyText.copyWith(color: Colors.white),
+                            keyboardType: TextInputType.name,
+                            textInputAction: TextInputAction.next,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(20),
+                              hintText: "Name",
+                              hintStyle: kBodyText,
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                            ),
                           ),
-                          MyTextField(
-                            hintText: 'Email',
-                            inputType: TextInputType.emailAddress,
+                          SizedBox(
+                            height: 10,
                           ),
-                          MyTextField(
-                            hintText: 'Phone',
-                            inputType: TextInputType.phone,
+                          TextField(
+                            controller: _emailController,
+                            style: kBodyText.copyWith(color: Colors.white),
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(20),
+                              hintText: "Email",
+                              hintStyle: kBodyText,
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                            ),
                           ),
-                          MyPasswordField(
-                            isPasswordVisible: passwordVisibility,
-                            onTap: () {
-                              setState(() {
-                                passwordVisibility = !passwordVisibility;
-                              });
-                            },
-                          )
+                          SizedBox(
+                            height: 10,
+                          ),
+                          TextField(
+                            controller: _phoneController,
+                            style: kBodyText.copyWith(color: Colors.white),
+                            keyboardType: TextInputType.phone,
+                            textInputAction: TextInputAction.next,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(20),
+                              hintText: "Phone",
+                              hintStyle: kBodyText,
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          TextField(
+                            controller: _passwordController,
+                            style: kBodyText.copyWith(
+                              color: Colors.white,
+                            ),
+                            obscureText: passwordVisibility,
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.done,
+                            decoration: InputDecoration(
+                              suffixIcon: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: IconButton(
+                                  splashColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  onPressed: () {
+                                    setState(() {
+                                      passwordVisibility = !passwordVisibility;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    passwordVisibility
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
+                              contentPadding: EdgeInsets.all(20),
+                              hintText: 'Password',
+                              hintStyle: kBodyText,
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -97,7 +234,75 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     MyTextButton(
                       buttonName: 'Register',
-                      onTap: () {},
+                      onTap: () async {
+                        if (_emailController.text.isEmpty ||
+                            _passwordController.text.isEmpty ||
+                            _nameController.text.isEmpty ||
+                            _phoneController.text.isEmpty) {
+                          _alertWidget(context, "Error in registration",
+                              "Some fields are empty.\nPlease fill out every fields.");
+                        } else if (_phoneController.text.length < 10) {
+                          _alertWidget(context, "Phone error",
+                              "The phone number you provided is invalid.\nPlease choose a valid number.");
+                        } else {
+                          try {
+                            FirebaseUser user = (await FirebaseAuth.instance
+                                    .createUserWithEmailAndPassword(
+                                        email: _emailController.text,
+                                        password: _passwordController.text))
+                                .user;
+
+                            if (user != null) {
+                              UserUpdateInfo updateUser = UserUpdateInfo();
+                              updateUser.displayName = _nameController.text;
+                              user.updateProfile(updateUser);
+
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => new AlertDialog(
+                                        title: new Text(
+                                            "Registration Successful!"),
+                                        content: new Text(
+                                            "You will now be taken to the homepage."),
+                                        actions: [
+                                          new GestureDetector(
+                                            onTap: () => {
+                                              Navigator.push(
+                                                context,
+                                                CupertinoPageRoute(
+                                                  builder: (context) =>
+                                                      HomePage(),
+                                                ),
+                                              )
+                                            },
+                                            child: Text("Continue"),
+                                          ),
+                                        ],
+                                        actionsPadding:
+                                            EdgeInsets.fromLTRB(0, 0, 20, 20),
+                                      ));
+                            }
+                          } catch (error) {
+                            var errorCode = error.code;
+                            var errorMessage = error.message;
+                            if (errorCode == 'ERROR_WEAK_PASSWORD') {
+                              _alertWidget(context, "Password Error",
+                                  "The password is too weak.\nPlease try another stronger password.\n\nDetailed error message:\n$errorMessage");
+                            } else if (errorCode ==
+                                'ERROR_EMAIL_ALREADY_IN_USE') {
+                              _alertWidget(context, "Email Error",
+                                  "Email is already in use by another account.\nPlease enter a new email.\n\nDetailed error message:\n$error");
+                            } else if (errorCode == 'ERROR_INVALID_EMAIL') {
+                              _alertWidget(context, "Email Error",
+                                  "Email is invalid.\nPlease check the spelling and structure of email.\n\nDetailed error message:\n$error");
+                            } else {
+                              _alertWidget(context, "Something weird happened.",
+                                  "A bug that we didn't predict has occured.\nPlease consider emailing the developer on roshan.parajuly1@gmail.com\n\nDetailed error message:\n$errorMessage");
+                            }
+                            print(error);
+                          }
+                        }
+                      },
                       // bgColor: Colors.white,
                       // textColor: Colors.black87,
                       bgColor: Color(0xFFF1792C),

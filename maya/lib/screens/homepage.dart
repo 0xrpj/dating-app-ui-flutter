@@ -22,13 +22,24 @@ class _MainPageState extends State<MainPage> {
   double dislikeBtnWidth = 150;
 
   Widget _picture() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(40),
-      child: Image.asset(
-        'assets/images/girl1.png',
-        height: 350,
-        width: 350,
-        fit: BoxFit.fill,
+    return Draggable(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(40),
+        child: Image.asset(
+          'assets/images/girl1.png',
+          height: 350,
+          width: 350,
+          fit: BoxFit.fill,
+        ),
+      ),
+      feedback: Material(
+        type: MaterialType.transparency,
+        child: Image.asset(
+          'assets/images/girl1.png',
+          height: 350,
+          width: 350,
+          fit: BoxFit.fill,
+        ),
       ),
     );
   }

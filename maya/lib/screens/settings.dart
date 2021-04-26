@@ -6,7 +6,8 @@ import 'package:maya/screens/profile.dart';
 import 'package:maya/screens/screen.dart';
 import 'package:maya/screens/settings.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import '../translations/locale_keys.g.dart';
+import 'package:easy_localization/easy_localization.dart';
 //Settings widget
 import 'package:flutter_settings/button/settings_button_layer.dart';
 import 'package:flutter_settings/checkbox/layer/checkbox_layer.dart';
@@ -131,7 +132,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 height: 10,
               ),
               Text(
-                "    Account Settings",
+                "    " + LocaleKeys.accSett.tr(),
                 style: TextStyle(fontSize: 19),
               ),
               SizedBox(
@@ -145,10 +146,12 @@ class _SettingsPageState extends State<SettingsPage> {
                   backgroundColor: Colors.redAccent,
                 ),
                 dialogButtonText: 'Done',
-                title: 'Phone number',
-                dialogTitle: 'Update Phone Number',
+                // title: 'Phone number',
+                title: LocaleKeys.phNum.tr(),
+                dialogTitle: LocaleKeys.updatePhNum.tr(),
                 caption: _phoneNumber, //_simCaption,
                 onPressed: (value) {
+                  // print("helllllllllllllllllllllllllo" + LocaleKeys.delAcc.tr());
                   if (value.toString().isNotEmpty) {
                     Fluttertoast.showToast(
                         msg: "Phone number was updated.",
@@ -177,7 +180,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
 
               SettingsButton(
-                title: "Delete account",
+                title: LocaleKeys.delAcc.tr(),
                 // caption: "caffe wifi",
                 icon: new SettingsIcon(
                   icon: Icons.delete_forever_rounded,
@@ -212,14 +215,14 @@ class _SettingsPageState extends State<SettingsPage> {
                 height: 10,
               ),
               Text(
-                "    System Settings",
+                "    " + LocaleKeys.syssett.tr(),
                 style: TextStyle(fontSize: 19),
               ),
               SizedBox(
                 height: 10,
               ),
               SettingsCheckBox(
-                title: 'Use fingerprint',
+                title: LocaleKeys.useFin.tr(),
                 icon: new SettingsIcon(
                   //a custom icon please check out this custom_icons.dart
                   icon: Icons.fingerprint_rounded,
@@ -246,7 +249,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 },
               ),
               SettingsButton(
-                title: "Location",
+                title: LocaleKeys.loc.tr(),
                 // caption: "caffe wifi",
                 icon: new SettingsIcon(
                   icon: Icons.gps_fixed_rounded,
@@ -258,8 +261,8 @@ class _SettingsPageState extends State<SettingsPage> {
               SettingsSelectionList<int>(
                 // turnOffList.add(SettingsSelectionItem<int>(0, "15 seconds"));
                 items: _langList,
-                chosenItemIndex: _defaultLangList,
-                title: 'Change app language',
+                chosenItemIndex: null,
+                title: LocaleKeys.chhAppLang.tr(),
                 dismissTitle: 'Cancel',
                 // caption: _defaultLang,
                 icon: new SettingsIcon(
@@ -267,16 +270,27 @@ class _SettingsPageState extends State<SettingsPage> {
                   color: Colors.white,
                   backgroundColor: Colors.redAccent,
                 ),
-                onSelect: (value, index) {
+                onSelect: (value, index) async {
                   setState(() {
                     _defaultLangList = index;
                     // _defaultLang = value.toString();
                   });
+                  if (index == 0) {
+                    //english selected
+                    await context.setLocale(Locale("en", "US"));
+
+                    setState(() {
+                      _defaultLangList = 1;
+                    });
+                  } else if (index == 1) {
+                    //nepali selected
+                    await context.setLocale(Locale("np", "NP"));
+                  }
                 },
                 context: context,
               ),
               SettingsButton(
-                title: "Check for updates",
+                title: LocaleKeys.chAppUpd.tr(),
                 // caption: "caffe wifi",
                 icon: new SettingsIcon(
                   icon: Icons.update_rounded,

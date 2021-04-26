@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:maya/screens/screen.dart';
 import '../widgets/widget.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import '../translations/locale_keys.g.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ChatSection extends StatefulWidget {
   @override
@@ -25,7 +27,7 @@ class _ChatSectionState extends State<ChatSection> {
             padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
             child: FlatMessageInputBox(
               roundedCorners: true,
-              hintText: "Search",
+              hintText: LocaleKeys.srch.tr(),
               iconChoosen: Icon(
                 Icons.search,
                 size: 24.0,
@@ -99,7 +101,7 @@ class _ChatSectionState extends State<ChatSection> {
             ),
           ),
           FlatSectionHeader(
-            title: "Marked Important",
+            title: LocaleKeys.markImp.tr(),
           ),
           Slidable(
             actionPane: SlidableDrawerActionPane(),
@@ -172,7 +174,7 @@ class _ChatSectionState extends State<ChatSection> {
             },
           ),
           FlatSectionHeader(
-            title: "Messages",
+            title: LocaleKeys.mess.tr(),
           ),
           FlatChatItem(
             profileImage: FlatProfileImage(

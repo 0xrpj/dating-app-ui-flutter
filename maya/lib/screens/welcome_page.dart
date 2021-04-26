@@ -8,7 +8,8 @@ import '../widgets/widget.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:page_transition/page_transition.dart';
 
-String finalEmail, finalName;
+// bool isBlackAndWhite = false;
+String finalEmail, finalName, finalBaWfilter;
 
 class SplashScreen extends StatelessWidget {
   final SecureStorage secureStorage = SecureStorage();
@@ -16,7 +17,29 @@ class SplashScreen extends StatelessWidget {
   Future<String> fetchValues() async {
     finalEmail = await secureStorage.readSecureData("email");
     finalName = await secureStorage.readSecureData("name");
+    finalBaWfilter = await secureStorage.readSecureData("blackandwhite");
+
     return finalEmail;
+  }
+
+  Widget materialApp(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+        scaffoldBackgroundColor: kBackgroundColor,
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: AnimatedSplashScreen(
+        splash: Image.asset(
+          'assets/images/logonomaya.png',
+        ),
+        nextScreen: finalEmail == null ? WelcomePage() : HomePage(),
+        splashTransition: SplashTransition.slideTransition,
+        pageTransitionType: PageTransitionType.fade,
+      ),
+    );
   }
 
   //Fetching data from secureStorage
@@ -31,25 +54,57 @@ class SplashScreen extends StatelessWidget {
           } else {
             if (snapshot.hasError)
               return Center(child: Text('Error: ${snapshot.error}'));
-            else
-              return MaterialApp(
-                debugShowCheckedModeBanner: false,
-                theme: ThemeData(
-                  textTheme:
-                      GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
-                  scaffoldBackgroundColor: kBackgroundColor,
-                  primarySwatch: Colors.blue,
-                  visualDensity: VisualDensity.adaptivePlatformDensity,
-                ),
-                home: AnimatedSplashScreen(
-                  splash: Image.asset(
-                    'assets/images/logonomaya.png',
-                  ),
-                  nextScreen: finalEmail == null ? WelcomePage() : HomePage(),
-                  splashTransition: SplashTransition.slideTransition,
-                  pageTransitionType: PageTransitionType.fade,
-                ),
-              ); // snapshot.data  :- get your object which is pass from your downloadData() function
+            else {
+              if (finalBaWfilter != null) {
+                return ColorFiltered(
+                    colorFilter: ColorFilter.matrix([
+                      // 0.2126,
+                      // 0.7152,
+                      // 0.0722,
+                      // 0,
+                      // 0,
+                      // 0.2126,
+                      // 0.7152,
+                      // 0.0722,
+                      // 0,
+                      // 0,
+                      // 0.2126,
+                      // 0.7152,
+                      // 0.0722,
+                      // 0,
+                      // 0,
+                      // 0,
+                      // 0,
+                      // 0,
+                      // 1,
+                      // 0,
+                      //
+                      -1,
+                      0,
+                      0,
+                      0,
+                      1,
+                      0,
+                      -1,
+                      0,
+                      0,
+                      1,
+                      0,
+                      0,
+                      -1,
+                      0,
+                      1,
+                      0,
+                      0,
+                      0,
+                      1,
+                      0
+                    ]),
+                    child: materialApp(context));
+              } else {
+                return materialApp(context);
+              } // snapshot.data  :- get your object which is pass from your downloadData() function
+            }
           }
         });
   }

@@ -6,8 +6,12 @@ import 'package:maya/screens/profile.dart';
 import 'package:maya/screens/screen.dart';
 import 'package:maya/screens/settings.dart';
 import 'package:avatar_glow/avatar_glow.dart';
+import 'package:maya/screens/storage.dart';
 import 'package:tcard/tcard.dart';
 import 'package:glass_kit/glass_kit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:invert_colors/invert_colors.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -19,6 +23,23 @@ class _MainPageState extends State<MainPage> {
   double dislikeBtnWidth = 75;
   TCardController _controller = TCardController();
   int cardNumber;
+  bool isVisible;
+  bool isFirstCard = true;
+
+  // @override
+  // void initState() {
+  //   super.initState(); //when this route starts, it will execute this code
+  //   Future.delayed(const Duration(seconds: 3), () {
+  //     print("Hide it");
+  //     //asynchronous delay
+  //     //checks if widget is still active and not disposed
+  //     setState(() {
+  //       //tells the widget builder to rebuild again because ui has updated
+  //       _visible =
+  //           false; //update the variable declare this under your class so its accessible for both your widget build and initState which is located under widget build{}
+  //     });
+  //   });
+  // }
 
   Widget _picture(imgLocation) {
     return Container(
@@ -147,7 +168,9 @@ class _MainPageState extends State<MainPage> {
           ),
           GestureDetector(
             onTap: () {
-              _controller.forward(direction: SwipDirection.Right);
+              setState(() {
+                // isVisible = false;
+              });
             },
             child: AvatarGlow(
               endRadius: 45.0,
@@ -164,6 +187,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget _layoutDetails() {
+    @override
     Orientation orientation = MediaQuery.of(context).orientation;
 
     if (orientation == Orientation.portrait) {
@@ -255,21 +279,59 @@ class _MainPageState extends State<MainPage> {
                   //   )
                   // ],
                   // ),
-                  child: Column(
+                  child: Stack(
                     children: [
-                      SizedBox(
-                        height: 20,
+                      Column(
+                        children: [
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Center(child: _picture(images[index])),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          _bio(personalDetails[index].split("%")),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          _likeUnlikeButtons()
+                        ],
                       ),
-                      Center(child: _picture(images[index])),
-                      SizedBox(
-                        height: 30,
+                      Positioned(
+                        left: 0,
+                        bottom: 15,
+                        child: SizedBox(
+                          width: 30,
+                          child: Visibility(
+                            visible: isFirstCard,
+                            child: isVisible
+                                ? FloatingActionButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        isVisible = false;
+                                        print("pressed undo");
+                                      });
+                                    },
+                                    child: Text("helllllo"),
+                                  )
+                                // ? FloatingActionButton(
+                                //     heroTag: null,
+                                //     onPressed: () {
+                                //       setState(() {
+                                //         isVisible = false;
+                                //         print("pressed undo");
+                                //       });
+                                //     },
+                                //     child: Icon(Icons.undo_rounded),
+                                //     backgroundColor: Color(0xFFEC3F27),
+                                //   )
+                                : Container(),
+                            replacement: Container(),
+                          ),
+                        ),
                       ),
-                      _bio(personalDetails[index].split("%")),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      _likeUnlikeButtons()
                     ],
+                    // child:
                   ),
                 )),
           );
@@ -283,11 +345,24 @@ class _MainPageState extends State<MainPage> {
         child: TCard(
           controller: _controller,
           onForward: (index, info) {
-            print(index);
+            if (info.direction == SwipDirection.Right) {
+              Fluttertoast.showToast(
+                  msg: "Liked",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.yellow,
+                  textColor: Colors.black,
+                  fontSize: 16.0);
+            }
+
+            setState(() {
+              isFirstCard = false;
+            });
           },
           onBack: (index, info) {
             // _controller.forward(SwipDirection);
-            print(index);
+            // print(index);
           },
           onEnd: () {
             _controller.reset();
@@ -362,6 +437,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    isVisible = true;
     return _layoutDetails();
   }
 }
@@ -374,6 +450,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedItemPosition = 1;
 
+  final SecureStorage secureStorage = SecureStorage();
   final tabs = [ProfilePage(), MainPage(), ChatSection()];
 
   Future<bool> _onBackPressed() {
@@ -429,6 +506,39 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             actions: <Widget>[
+              PopupMenuButton<String>(
+                icon: Icon(
+                  Icons.accessibility_new,
+                  size: 28.0,
+                  color: Colors.redAccent,
+                ),
+                onSelected: (value) {
+                  switch (value) {
+                    case 'B/W Filter on':
+                      // setState(() {
+
+                      //Saving to storage so that login data is retained
+                      secureStorage.writeSecureData("blackandwhite", "true");
+                      // RestartWidget.restartApp(context);
+                      Phoenix.rebirth(context);
+                      // });
+                      break;
+                    case 'B/W Filter off':
+                      secureStorage.deleteSecureData("blackandwhite");
+                      Phoenix.rebirth(context);
+                      break;
+                  }
+                },
+                itemBuilder: (BuildContext context) {
+                  return {'B/W Filter on', 'B/W Filter off'}
+                      .map((String choice) {
+                    return PopupMenuItem<String>(
+                      value: choice,
+                      child: Text(choice),
+                    );
+                  }).toList();
+                },
+              ),
               Padding(
                   padding: EdgeInsets.only(right: 20.0),
                   child: GestureDetector(
@@ -438,7 +548,6 @@ class _HomePageState extends State<HomePage> {
                           CupertinoPageRoute(
                             builder: (context) => SettingsPage(),
                           ));
-                      print("tapped setting icon");
                     },
                     child: Icon(
                       Icons.settings_outlined,

@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:maya/screens/storage.dart';
 import 'screen.dart';
+import '../translations/locale_keys.g.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 Widget _coverPlusDP(BuildContext context) {
   return Column(
@@ -91,7 +93,7 @@ Widget _friendsnStreaks() {
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
       Text(
-        "Hearts: 50k+",
+        LocaleKeys.hearts.tr() + ": 50k+",
         style: TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 20,
@@ -101,7 +103,7 @@ Widget _friendsnStreaks() {
         width: 60,
       ),
       Text(
-        "Maya Streak: 1k+",
+        LocaleKeys.maya.tr() + " " + LocaleKeys.streak.tr() + ": 1k+",
         style: TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 20,
@@ -126,7 +128,7 @@ Widget _interest() {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "Add your interests",
+                LocaleKeys.addInt.tr(),
                 style: TextStyle(
                   fontFamily: "Poppins",
                   fontWeight: FontWeight.w400,
@@ -154,11 +156,11 @@ Widget _ad() {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "Upgrade to Maya+",
+                LocaleKeys.upgMayaPlus.tr(),
                 style: TextStyle(
                   fontFamily: "Poppins",
                   fontWeight: FontWeight.w400,
-                  fontSize: 28,
+                  fontSize: 25,
                 ),
               ),
             ],
@@ -178,7 +180,8 @@ Widget _logout(BuildContext context) {
                 CupertinoPageRoute(builder: (context) => SplashScreen()));
           },
           color: Colors.red,
-          child: Text("Logout", style: TextStyle(color: Colors.white)))
+          child: Text(LocaleKeys.logOut.tr(),
+              style: TextStyle(color: Colors.white)))
     ],
   );
 }

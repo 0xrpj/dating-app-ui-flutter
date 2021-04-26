@@ -5,51 +5,57 @@ import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:maya/screens/profile.dart';
 import 'package:maya/screens/screen.dart';
 import 'package:maya/screens/settings.dart';
+import 'package:avatar_glow/avatar_glow.dart';
+import 'package:tcard/tcard.dart';
+import 'package:glass_kit/glass_kit.dart';
 
-import '../constants.dart';
-
-// import '../screens/screen.dart';
-// import '../widgets/widget.dart';
-//
-//
 class MainPage extends StatefulWidget {
   @override
   _MainPageState createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
-  double likeBtnWidth = 150;
-  double dislikeBtnWidth = 150;
+  double likeBtnWidth = 75;
+  double dislikeBtnWidth = 75;
+  TCardController _controller = TCardController();
+  int cardNumber;
 
-  Widget _picture() {
-    return Draggable(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(40),
-        child: Image.asset(
-          'assets/images/girl1.png',
-          height: 350,
-          width: 350,
-          fit: BoxFit.fill,
-        ),
+  Widget _picture(imgLocation) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30.0),
+        boxShadow: [
+          BoxShadow(
+            offset: Offset(0, 17),
+            blurRadius: 23.0,
+            spreadRadius: -13.0,
+            color: Colors.black54,
+          )
+        ],
       ),
-      feedback: Material(
-        type: MaterialType.transparency,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(30.0),
         child: Image.asset(
-          'assets/images/girl1.png',
-          height: 350,
+          imgLocation,
+          height: 400,
           width: 350,
-          fit: BoxFit.fill,
+          fit: BoxFit.cover,
         ),
       ),
     );
   }
 
-  Widget _bio() {
+  Widget _bio(List details) {
+    String name = details[0];
+    String age = details[1];
+    String bio = details[2];
+    String location = details[3];
     return SizedBox(
         width: 350,
         height: 150,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(30),
           child: RaisedButton(
             color: Color(0xFFEC3F27),
             textColor: Colors.white,
@@ -60,7 +66,7 @@ class _MainPageState extends State<MainPage> {
                   height: 10,
                 ),
                 Text(
-                  "Ichya Parajuli, 21",
+                  name + ", " + age,
                   style: TextStyle(
                     fontFamily: "Poppins",
                     fontWeight: FontWeight.w400,
@@ -71,7 +77,7 @@ class _MainPageState extends State<MainPage> {
                   height: 10,
                 ),
                 Text(
-                  "Lawyer, Optimist.",
+                  bio,
                   style: TextStyle(
                     fontFamily: "Poppins",
                     fontWeight: FontWeight.w400,
@@ -87,11 +93,11 @@ class _MainPageState extends State<MainPage> {
                     children: [
                       Icon(Icons.location_on),
                       Text(
-                        " Chabahil, Kathmandu",
+                        " " + location,
                         style: TextStyle(
                           fontFamily: "Poppins",
                           fontWeight: FontWeight.w400,
-                          fontSize: 20,
+                          fontSize: 18,
                         ),
                       ),
                     ],
@@ -112,26 +118,46 @@ class _MainPageState extends State<MainPage> {
           GestureDetector(
             onTap: () {
               print("Dislike");
+              _controller.forward(direction: SwipDirection.Left);
             },
-            child: Image(
-              image: AssetImage('assets/images/dislike.png'),
-              width: dislikeBtnWidth,
+            child: AvatarGlow(
+              endRadius: 45.0,
+              glowColor: Colors.redAccent,
+              // duration: Duration(milliseconds: 4000),
+              showTwoGlows: true,
+              child: Image(
+                // elevation: 8.0,
+                image: AssetImage('assets/images/cross2.png'),
+                width: dislikeBtnWidth,
+              ),
             ),
           ),
           GestureDetector(
             onTap: () {
-              print("Like");
-              setState(() {
-                likeBtnWidth -= 10;
-                // likeBtnWidth -= 10;
-                // dislikeBtnWidth -= 10;
-              });
+              _controller.forward(direction: SwipDirection.Right);
             },
-            child: Image(
-              image: AssetImage('assets/images/like.png'),
-              width: likeBtnWidth,
+            child: AvatarGlow(
+              endRadius: 50.0,
+              glowColor: Colors.redAccent,
+              child: Image(
+                image: AssetImage('assets/images/heart.png'),
+                width: dislikeBtnWidth,
+              ),
             ),
-          )
+          ),
+          GestureDetector(
+            onTap: () {
+              _controller.forward(direction: SwipDirection.Right);
+            },
+            child: AvatarGlow(
+              endRadius: 45.0,
+              glowColor: Colors.redAccent,
+              child: Image(
+                image: AssetImage('assets/images/chat.png'),
+                width: dislikeBtnWidth,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -147,22 +173,147 @@ class _MainPageState extends State<MainPage> {
         // likeBtnWidth -= 10;
         // dislikeBtnWidth -= 10;
       });
-      return Column(
-        children: [
-          SizedBox(
-            height: 40,
-          ),
-          Center(child: _picture()),
-          SizedBox(
-            height: 40,
-          ),
-          _bio(),
-          SizedBox(
-            height: 20,
-          ),
-          _likeUnlikeButtons()
-        ],
+
+      List<String> images = [
+        'assets/images/girls/girl1.png',
+        'assets/images/girls/girl2.png',
+        'assets/images/girls/girl3.png',
+        'assets/images/girls/girl4.png',
+        'assets/images/girls/girl5.png',
+        'assets/images/girls/girl6.png',
+      ];
+
+      List<String> personalDetails = [
+        'Prakriti Regmi%20%Lets read Murakami together.%Chabahil (1 mi away)',
+        'Dristi Sigdel%19%Belle áme%Sundhara (2 mi away)',
+        'Prajita Upreti%19%Here to make friends.%Makalbari (2.3 mi away)',
+        'Sugandhi C.%21%Not looking for any drama.%Bhaktapur (7 mi away)',
+        "Pawana Shrestha%20%Why am I here for?%Attarkhel",
+        "Tanuja Shrestha%21%Hi there! ♐︎%Dakshin Dhoka"
+      ];
+
+      List<Widget> cards = List.generate(
+        images.length < personalDetails.length
+            ? images.length
+            : personalDetails.length,
+        (int index) {
+          return GlassContainer.frostedGlass(
+            height: 800,
+            width: 800,
+
+            gradient: LinearGradient(
+              colors: [
+                Colors.white.withOpacity(0.40),
+                Colors.white.withOpacity(0.10)
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+
+            borderGradient: LinearGradient(
+              colors: [
+                Colors.white.withOpacity(0.60),
+                Colors.white.withOpacity(0.10),
+                Colors.black.withOpacity(0.05),
+                Colors.black.withOpacity(0.05)
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              stops: [0.0, 0.39, 0.40, 1.0],
+            ),
+
+            blur: 20.0,
+            borderWidth: 1.5,
+            elevation: 3.0,
+            shadowColor: Colors.black.withOpacity(0.30),
+            alignment: Alignment.center,
+            frostedOpacity: 0.12,
+            // margin: EdgeInsets.all(8.0),
+            // padding: EdgeInsets.all(8.0),
+            child: Padding(
+                padding: const EdgeInsets.fromLTRB(30, 20, 30, 0),
+                child: Container(
+                  // height: 800,
+                  // width: 900,
+                  // decoration: BoxDecoration(
+                  // color: Color(0xfff2f2f4),
+                  // border: Border.all(
+                  //   color: Color(0xfff2f2f4),
+                  // ),
+                  // borderRadius: BorderRadius.all(Radius.circular(30)),
+                  // boxShadow: [
+                  //   BoxShadow(
+                  //     // color: Colors.grey[500],
+                  //     blurRadius:
+                  //         23.0, // has the effect of softening the shadow
+                  //     spreadRadius:
+                  //         -2, // has the effect of extending the shadow
+                  //     offset: Offset(
+                  //       2.0, // horizontal, move right 10
+                  //       2.0, // vertical, move down 10
+                  //     ),
+                  //   )
+                  // ],
+                  // ),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Center(child: _picture(images[index])),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      _bio(personalDetails[index].split("%")),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      _likeUnlikeButtons()
+                    ],
+                  ),
+                )),
+          );
+          // );
+        },
       );
+
+      return SizedBox(
+        width: double.infinity,
+        height: double.infinity,
+        child: TCard(
+          controller: _controller,
+          onForward: (index, info) {
+            print(index);
+          },
+          onBack: (index, info) {
+            // _controller.forward(SwipDirection);
+            print(index);
+          },
+          onEnd: () {
+            _controller.reset();
+          },
+          size: Size(double.infinity, double.infinity),
+          cards: cards,
+        ),
+      );
+
+      // return Center(
+      //   child: Column(
+      //     children: [
+      //       SizedBox(
+      //         height: 20,
+      //       ),
+      //       TCard(
+      //         size: Size(400, 500),
+      //         cards: cards,
+      //       ),
+      //       SizedBox(
+      //         height: 20,
+      //       ),
+      //       _bio()
+      //     ],
+      //   ),
+      // );
     } else {
       setState(() {
         likeBtnWidth = 110;
@@ -183,7 +334,7 @@ class _MainPageState extends State<MainPage> {
             width: 300,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: _picture(),
+              child: _picture('assets/images/girl1.png'),
             ),
           ),
           SizedBox(
@@ -195,7 +346,10 @@ class _MainPageState extends State<MainPage> {
                   padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                   child: Column(
                     children: [
-                      Container(width: 300, height: 150, child: _bio()),
+                      Container(
+                          width: 300,
+                          height: 150,
+                          child: _bio(["he", "hi", "ho", "ho"])),
                       Container(child: _likeUnlikeButtons()),
                     ],
                   )),

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:maya/screens/screen.dart';
 import '../widgets/widget.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class ChatSection extends StatefulWidget {
   @override
@@ -100,26 +101,50 @@ class _ChatSectionState extends State<ChatSection> {
           FlatSectionHeader(
             title: "Marked Important",
           ),
-          FlatChatItem(
-            profileImage: FlatProfileImage(
-              onlineIndicator: true,
-              imageUrl: 'https://pbs.twimg.com/media/Do9uXD2XsAA2h8W.jpg',
+          Slidable(
+            actionPane: SlidableDrawerActionPane(),
+            actionExtentRatio: 0.25,
+            child: FlatChatItem(
+              profileImage: FlatProfileImage(
+                onlineIndicator: true,
+                imageUrl: 'https://pbs.twimg.com/media/Do9uXD2XsAA2h8W.jpg',
+              ),
+              name: "Aasha Upadhyay",
+              message: "I will be waiting for you desperately.",
+              multiLineMessage: false,
+              onPressed: () {
+                // Navigator.pushNamed(context, ChatPage.id);
+                // print("pressed");
+                Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) => ChatPage(),
+                    ));
+              },
+              counter: FlatCounter(
+                text: "9+",
+              ),
             ),
-            name: "Aasha Upadhyay",
-            message: "I will be waiting for you desperately.",
-            multiLineMessage: false,
-            onPressed: () {
-              // Navigator.pushNamed(context, ChatPage.id);
-              // print("pressed");
-              Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) => ChatPage(),
-                  ));
-            },
-            counter: FlatCounter(
-              text: "9+",
-            ),
+            secondaryActions: <Widget>[
+              IconSlideAction(
+                caption: 'Mute',
+                color: Colors.green,
+                icon: Icons.volume_off,
+                onTap: () => print('Mute'),
+              ),
+              IconSlideAction(
+                caption: 'Archive',
+                color: Colors.blue,
+                icon: Icons.archive,
+                onTap: () => print('Archive'),
+              ),
+              IconSlideAction(
+                caption: 'Delete',
+                color: Colors.red,
+                icon: Icons.delete,
+                onTap: () => print('Delete'),
+              ),
+            ],
           ),
           FlatChatItem(
             profileImage: FlatProfileImage(

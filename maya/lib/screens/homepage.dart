@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:maya/screens/profile.dart';
@@ -11,12 +12,21 @@ import 'package:tcard/tcard.dart';
 import 'package:glass_kit/glass_kit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:invert_colors/invert_colors.dart';
+import 'package:shake/shake.dart';
+// import 'package:feature_discovery/feature_discovery.dart';
 
 class MainPage extends StatefulWidget {
   @override
   _MainPageState createState() => _MainPageState();
 }
+
+// class TutorialKeys {
+//   static final keyOne = GlobalKey();
+//   static final keyTwo = GlobalKey();
+//   static final keyThree = GlobalKey();
+//   static final keyFour = GlobalKey();
+//   static final keyFive = GlobalKey();
+// }
 
 class _MainPageState extends State<MainPage> {
   double likeBtnWidth = 75;
@@ -26,20 +36,19 @@ class _MainPageState extends State<MainPage> {
   bool isVisible;
   bool isFirstCard = true;
 
-  // @override
-  // void initState() {
-  //   super.initState(); //when this route starts, it will execute this code
-  //   Future.delayed(const Duration(seconds: 3), () {
-  //     print("Hide it");
-  //     //asynchronous delay
-  //     //checks if widget is still active and not disposed
-  //     setState(() {
-  //       //tells the widget builder to rebuild again because ui has updated
-  //       _visible =
-  //           false; //update the variable declare this under your class so its accessible for both your widget build and initState which is located under widget build{}
-  //     });
-  //   });
-  // }
+  void initState() {
+    super.initState();
+    ShakeDetector detector = ShakeDetector.autoStart(onPhoneShake: () {
+      Fluttertoast.showToast(
+          msg: "6 people looking at your profile right now!",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.yellowAccent,
+          textColor: Colors.black,
+          fontSize: 16.0);
+    });
+  }
 
   Widget _picture(imgLocation) {
     return Container(
@@ -168,9 +177,16 @@ class _MainPageState extends State<MainPage> {
           ),
           GestureDetector(
             onTap: () {
-              setState(() {
-                // isVisible = false;
-              });
+              // setState(() {
+              //   // isVisible = false;
+              // });
+              //
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => EmptyChatPage("Prakriti Regmi"),
+                ),
+              );
             },
             child: AvatarGlow(
               endRadius: 45.0,
@@ -252,6 +268,7 @@ class _MainPageState extends State<MainPage> {
             shadowColor: Colors.black.withOpacity(0.30),
             alignment: Alignment.center,
             frostedOpacity: 0.12,
+            borderRadius: BorderRadius.all(Radius.circular(30)),
             // margin: EdgeInsets.all(8.0),
             // padding: EdgeInsets.all(8.0),
             child: Padding(
@@ -298,22 +315,28 @@ class _MainPageState extends State<MainPage> {
                         ],
                       ),
                       Positioned(
+                        top: 0,
                         left: 0,
-                        bottom: 15,
                         child: SizedBox(
                           width: 30,
                           child: Visibility(
                             visible: isFirstCard,
                             child: isVisible
                                 ? FloatingActionButton(
+                                    hoverColor: Colors.green,
+                                    backgroundColor: Colors.white,
                                     onPressed: () {
-                                      setState(() {
-                                        isVisible = false;
-                                        print("pressed undo");
-                                      });
+                                      // setState(() {
+                                      //   isVisible = false;
+                                      // });
+                                      _controller.back();
                                     },
-                                    child: Text("helllllo"),
+                                    child: Icon(
+                                      Icons.undo_rounded,
+                                      color: Colors.redAccent,
+                                    ),
                                   )
+
                                 // ? FloatingActionButton(
                                 //     heroTag: null,
                                 //     onPressed: () {
@@ -449,8 +472,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedItemPosition = 1;
-
   final SecureStorage secureStorage = SecureStorage();
+
   final tabs = [ProfilePage(), MainPage(), ChatSection()];
 
   Future<bool> _onBackPressed() {
@@ -480,133 +503,142 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: _onBackPressed,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(60),
-          child: AppBar(
-            backgroundColor: Colors.white,
-            leading: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 0, 5, 0),
-              child: Image.asset(
-                "assets/images/logonomaya.png",
-                width: 50,
-              ),
-            ),
-            // centerTitle: true,
-            title: Text(
-              // "मा या",
-              "Maya",
-              style: TextStyle(
-                fontFamily: "Poppins",
-                fontWeight: FontWeight.w400,
-                fontSize: 26,
-                color: Colors.pinkAccent[400],
-              ),
-            ),
-            actions: <Widget>[
-              PopupMenuButton<String>(
-                icon: Icon(
-                  Icons.accessibility_new,
-                  size: 28.0,
-                  color: Colors.redAccent,
+        onWillPop: _onBackPressed,
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(60),
+            child: AppBar(
+              backgroundColor: Colors.white,
+              leading: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 0, 5, 0),
+                child: Image.asset(
+                  "assets/images/logonomaya.png",
+                  width: 50,
                 ),
-                onSelected: (value) {
-                  switch (value) {
-                    case 'B/W Filter on':
-                      // setState(() {
-
-                      //Saving to storage so that login data is retained
-                      secureStorage.writeSecureData("blackandwhite", "true");
-                      // RestartWidget.restartApp(context);
-                      Phoenix.rebirth(context);
-                      // });
-                      break;
-                    case 'B/W Filter off':
-                      secureStorage.deleteSecureData("blackandwhite");
-                      Phoenix.rebirth(context);
-                      break;
-                  }
-                },
-                itemBuilder: (BuildContext context) {
-                  return {'B/W Filter on', 'B/W Filter off'}
-                      .map((String choice) {
-                    return PopupMenuItem<String>(
-                      value: choice,
-                      child: Text(choice),
-                    );
-                  }).toList();
-                },
               ),
-              Padding(
-                  padding: EdgeInsets.only(right: 20.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                            builder: (context) => SettingsPage(),
-                          ));
-                    },
-                    child: Icon(
-                      Icons.settings_outlined,
-                      size: 28.0,
-                      color: Colors.redAccent,
-                    ),
-                  )),
-            ],
-          ),
-        ),
-        body: tabs[_selectedItemPosition],
-        bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black,
+              // centerTitle: true,
+              title: Text(
+                // "मा या",
+                "Maya",
+                style: TextStyle(
+                  fontFamily: "Poppins",
+                  fontWeight: FontWeight.w400,
+                  fontSize: 26,
+                  color: Colors.pinkAccent[400],
+                ),
               ),
-            ],
+              actions: <Widget>[
+                PopupMenuButton<String>(
+                  icon: Icon(
+                    Icons.accessibility_new,
+                    size: 28.0,
+                    color: Colors.redAccent,
+                  ),
+                  onSelected: (value) {
+                    switch (value) {
+                      case 'B/W Filter on':
+                        secureStorage.writeSecureData("blackandwhite", "true");
+                        Phoenix.rebirth(context);
+                        break;
+
+                      case 'B/W Filter off':
+                        secureStorage.deleteSecureData("blackandwhite");
+                        Phoenix.rebirth(context);
+                        break;
+
+                      case 'Invert on':
+                        secureStorage.writeSecureData("invert", "true");
+                        Phoenix.rebirth(context);
+                        break;
+
+                      case 'Invert off':
+                        secureStorage.deleteSecureData("invert");
+                        Phoenix.rebirth(context);
+                        break;
+                    }
+                  },
+                  itemBuilder: (BuildContext context) {
+                    return {
+                      'B/W Filter on',
+                      'B/W Filter off',
+                      'Invert on',
+                      'Invert off'
+                    }.map((String choice) {
+                      return PopupMenuItem<String>(
+                        value: choice,
+                        child: Text(choice),
+                      );
+                    }).toList();
+                  },
+                ),
+                Padding(
+                    padding: EdgeInsets.only(right: 20.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                              builder: (context) => SettingsPage(),
+                            ));
+                      },
+                      child: Icon(
+                        Icons.settings_outlined,
+                        size: 28.0,
+                        color: Colors.redAccent,
+                      ),
+                    )),
+              ],
+            ),
           ),
-          child: SnakeNavigationBar.color(
-            height: 60,
-            backgroundColor: Colors.white,
-            behaviour: SnakeBarBehaviour.floating,
-            snakeShape: SnakeShape.indicator,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(0))),
-            // padding: EdgeInsets.all(12),
+          body: tabs[_selectedItemPosition],
+          bottomNavigationBar: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black,
+                ),
+              ],
+            ),
+            child: SnakeNavigationBar.color(
+              height: 60,
+              backgroundColor: Colors.white,
+              behaviour: SnakeBarBehaviour.floating,
+              snakeShape: SnakeShape.indicator,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(0))),
+              // padding: EdgeInsets.all(12),
 
-            ///configuration for SnakeNavigationBar.color
-            // snakeViewColor: Colors.redAccent,
-            snakeViewColor: Color(0xFFEC3F27),
-            selectedItemColor: SnakeShape.circle == SnakeShape.indicator
-                ? Colors.black
-                // : Color(0xFFEC3F27),
-                : Color(0xFFEC3F27),
-            unselectedItemColor: Colors.blueGrey,
-            //blueGrey thyo
+              ///configuration for SnakeNavigationBar.color
+              // snakeViewColor: Colors.redAccent,
+              snakeViewColor: Color(0xFFEC3F27),
+              selectedItemColor: SnakeShape.circle == SnakeShape.indicator
+                  ? Colors.black
+                  // : Color(0xFFEC3F27),
+                  : Color(0xFFEC3F27),
+              unselectedItemColor: Colors.blueGrey,
+              //blueGrey thyo
 
-            showUnselectedLabels: false,
-            showSelectedLabels: false,
+              showUnselectedLabels: false,
+              showSelectedLabels: false,
 
-            currentIndex: _selectedItemPosition,
-            onTap: (index) => setState(() => _selectedItemPosition = index),
+              currentIndex: _selectedItemPosition,
+              onTap: (index) => setState(() => _selectedItemPosition = index),
 
-            items: [
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.person_outline_sharp, size: 28),
-                  label: 'profile'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.water_damage_outlined, size: 28),
-                  label: 'home'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.messenger_outline_rounded, size: 28),
-                  label: 'messages'),
-            ],
+              items: [
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.person_outline_sharp, size: 28),
+                    label: 'profile'),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.water_damage_outlined, size: 28),
+                    label: 'home'),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.messenger_outline_rounded, size: 28),
+                    label: 'messages'),
+              ],
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }

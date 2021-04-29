@@ -6,8 +6,10 @@ import 'package:maya/screens/profile.dart';
 import 'package:maya/screens/screen.dart';
 import 'package:maya/screens/settings.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:maya/screens/storage.dart';
 import '../translations/locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:url_launcher/url_launcher.dart';
 //Settings widget
 import 'package:flutter_settings/button/settings_button_layer.dart';
 import 'package:flutter_settings/checkbox/layer/checkbox_layer.dart';
@@ -45,6 +47,7 @@ import 'package:local_auth/local_auth.dart';
 LocalAuthentication localAuthentication = LocalAuthentication();
 bool isFingerprint = false;
 bool isAuth = false;
+final SecureStorage secureStorage = SecureStorage();
 
 Future<bool> checkFingerprint() async {
   bool canAuth = await localAuthentication.canCheckBiometrics;
@@ -178,6 +181,49 @@ class _SettingsPageState extends State<SettingsPage> {
                 },
                 context: context,
               ),
+              SettingsButton(
+                title: "Edit Profile",
+                // caption: "caffe wifi",
+                icon: new SettingsIcon(
+                  icon: Icons.edit,
+                  backgroundColor: Colors.redAccent,
+                  color: Colors.white,
+                ),
+                onPressed: () async {
+                  Fluttertoast.showToast(
+                      msg: "Feature will be added in next update.",
+                      toastLength: Toast.LENGTH_LONG,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                },
+              ),
+              SettingsButton(
+                title: "Logout",
+                // caption: "caffe wifi",
+                icon: new SettingsIcon(
+                  icon: Icons.logout,
+                  backgroundColor: Colors.redAccent,
+                  color: Colors.white,
+                ),
+                onPressed: () async {
+                  Fluttertoast.showToast(
+                      msg: "Logging you out.",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+
+                  secureStorage.deleteSecureData("email");
+
+                  Navigator.pushReplacement(context,
+                      CupertinoPageRoute(builder: (context) => SplashScreen()));
+                },
+              ),
 
               SettingsButton(
                 title: LocaleKeys.delAcc.tr(),
@@ -248,7 +294,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   }
                 },
               ),
-              SettingsButton(
+              SettingsCheckBox(
                 title: LocaleKeys.loc.tr(),
                 // caption: "caffe wifi",
                 icon: new SettingsIcon(
@@ -256,6 +302,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   backgroundColor: Colors.redAccent,
                   color: Colors.white,
                 ),
+                value: true,
+                type: CheckBoxWidgetType.Switch,
                 onPressed: () async {},
               ),
               SettingsSelectionList<int>(
@@ -288,6 +336,52 @@ class _SettingsPageState extends State<SettingsPage> {
                   }
                 },
                 context: context,
+              ),
+              SettingsButton(
+                title: "Help and Support",
+                // caption: "caffe wifi",
+                icon: new SettingsIcon(
+                  icon: Icons.help_center_rounded,
+                  backgroundColor: Colors.redAccent,
+                  color: Colors.white,
+                ),
+                onPressed: () async {
+                  await canLaunch(
+                          "https://maya-application-android.netlify.app/")
+                      ? await launch(
+                          "https://maya-application-android.netlify.app/")
+                      : throw 'Could not launch';
+                },
+              ),
+              SettingsButton(
+                title: "Report a bug",
+                // caption: "caffe wifi",
+                icon: new SettingsIcon(
+                  icon: Icons.bug_report,
+                  backgroundColor: Colors.redAccent,
+                  color: Colors.white,
+                ),
+                onPressed: () async {
+                  await canLaunch(
+                          "mailto:roshan.parajuly1@gmail.com?subject='Bug Report'&body=Device Details: \nPoco M2 Pro \n4 GB Ram\nAndroid 9 \nException: IgnoreHandle Exception on line 32.")
+                      ? await launch(
+                          "mailto:roshan.parajuly1@gmail.com?subject='Bug Report'&body=Device Details: \nPoco M2 Pro \n4 GB Ram\nAndroid 9 \nException: IgnoreHandle Exception on line 32.")
+                      : throw 'Could not launch';
+                },
+              ),
+              SettingsButton(
+                title: "Integration inquiry",
+                // caption: "caffe wifi",
+                icon: new SettingsIcon(
+                  icon: Icons.call,
+                  backgroundColor: Colors.redAccent,
+                  color: Colors.white,
+                ),
+                onPressed: () async {
+                  await canLaunch("tel:9864022333")
+                      ? await launch("tel:9864022333")
+                      : throw 'Could not launch';
+                },
               ),
               SettingsButton(
                 title: LocaleKeys.chAppUpd.tr(),

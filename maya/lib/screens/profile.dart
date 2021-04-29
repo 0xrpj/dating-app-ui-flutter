@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:glass_kit/glass_kit.dart';
 import 'package:maya/screens/storage.dart';
 import 'screen.dart';
 import '../translations/locale_keys.g.dart';
@@ -113,12 +114,108 @@ Widget _friendsnStreaks() {
   );
 }
 
+Widget _profileButtons(String text) {
+  String number = text.split("\n")[0];
+  String other_text = text.split("\n")[1];
+  String emoji = text.split("\n")[2];
+
+  return SizedBox(
+    child: GlassContainer.clearGlass(
+        width: 170,
+        height: 80,
+        color: Colors.white10,
+        gradient: LinearGradient(
+          colors: [
+            Color(0xFFEC3F27).withOpacity(0.60),
+            Color(0xFFEC3F27).withOpacity(0.40)
+          ],
+          // begin: Alignment.topLeft,
+          // end: Alignment.bottomRight,
+        ),
+        borderGradient: LinearGradient(
+          colors: [
+            Colors.white.withOpacity(0.60),
+            Colors.white.withOpacity(0.10),
+            Colors.black.withOpacity(0.05),
+            Colors.black.withOpacity(0.05)
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          stops: [0.0, 0.39, 0.40, 1.0],
+        ),
+        blur: 20.0,
+        borderWidth: 1.5,
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+        elevation: 3.0,
+        shadowColor: Colors.black.withOpacity(0.30),
+        alignment: Alignment.center,
+        // frostedOpacity: 0.12,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              number,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                // color: Colors.redAccent,
+              ),
+            ),
+            Text(
+              other_text,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 15,
+              ),
+            ),
+          ],
+        )),
+  );
+}
+
+Widget _cards() {
+  return Center(
+    child: Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          // crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _profileButtons("13\nnew matches\n🔥"),
+            SizedBox(
+              width: 20,
+            ),
+            _profileButtons("171\nnew likes\n💝"),
+          ],
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _profileButtons("9785\nprofile visitors\n🥰"),
+            SizedBox(
+              width: 20,
+            ),
+            _profileButtons("6\nunmatched me\n👎"),
+          ],
+        ),
+        SizedBox(
+          height: 10,
+        ),
+      ],
+    ),
+  );
+}
+
 Widget _interest() {
   return SizedBox(
-      width: 330,
-      height: 80,
+      width: 180,
+      height: 40,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(40),
+        // borderRadius: BorderRadius.circular(40),
         child: RaisedButton(
           color: Color(0xFFFD7F00),
           textColor: Colors.white,
@@ -132,7 +229,7 @@ Widget _interest() {
                 style: TextStyle(
                   fontFamily: "Poppins",
                   fontWeight: FontWeight.w400,
-                  fontSize: 28,
+                  fontSize: 15,
                 ),
               ),
             ],
@@ -143,7 +240,7 @@ Widget _interest() {
 
 Widget _ad() {
   return SizedBox(
-      width: 330,
+      width: 250,
       height: 80,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(40),
@@ -160,7 +257,7 @@ Widget _ad() {
                 style: TextStyle(
                   fontFamily: "Poppins",
                   fontWeight: FontWeight.w400,
-                  fontSize: 25,
+                  fontSize: 20,
                 ),
               ),
             ],
@@ -203,15 +300,24 @@ Widget _layoutDetails(BuildContext context) {
       SizedBox(
         height: 20,
       ),
-      _interest(),
+      _cards(),
+      // SizedBox(
+      //   height: 10,
+      // ),
+      // _interest(),
       SizedBox(
-        height: 20,
+        height: 10,
       ),
       _ad(),
+
       SizedBox(
         height: 20,
       ),
-      _logout(context)
+
+      // SizedBox(
+      //   height: 20,
+      // ),
+      // _logout(context)
     ]);
   } else {
     return Column();

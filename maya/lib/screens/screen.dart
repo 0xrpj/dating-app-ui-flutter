@@ -8,3 +8,4 @@ export './settings.dart';
 export './chatpage.dart';
 export './loading.dart';
 export './example.dart';
+export './emptychatpage.dart';
